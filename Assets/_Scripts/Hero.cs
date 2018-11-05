@@ -7,12 +7,13 @@ public class Hero : MonoBehaviour {
 
     [Header("Set in Inspector")]
     // these fields control the movement of the ship
-    public float speed = 30;
-    public float rollMult = -45;
-    public float pitchMult = 30;
-    public float gameRestartDelay = 2f;
-    public GameObject projectilePrefab;
-    public float projectileSpeed = 40;
+    public float                    speed = 30;
+    public float                    rollMult = -45;
+    public float                    pitchMult = 30;
+    public float                    gameRestartDelay = 2f;
+    public GameObject               projectilePrefab;
+    public float                    projectileSpeed = 40;
+    public Weapon[]                 weapons;
 
     [Header("Set Dynamically")]
     [SerializeField]
@@ -33,7 +34,7 @@ public class Hero : MonoBehaviour {
         else {
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S!");
         }
-        fireDelegate += TempFire;
+        //fireDelegate += TempFire;
     }
 
     // Update is called once per frame
@@ -92,11 +93,22 @@ public class Hero : MonoBehaviour {
             if (go.tag == "Enemy") {  // if the shield was triggered by an enemy 
                 shieldLevel--;      // decrease the level of the shield by 1
                 Destroy(go);                    // ...and destroy
-            } else {
+            } else if(go.tag == "PowerUP") {
+            // if the shield was triggered by a PowerUP
+                AbsorbPowerUp(go);
                 print("Triggered by non-Enemy: " + go.name);
             }
         }
 
+    public void AbsorbPowerUp( GameObject go) {
+        PowerUp pu = go.GetComponent<PowerUp>();
+        switch (pu.type) {
+
+            // leave this switch block empty for now
+
+        }
+        pu.AbsorbedBy(this.gameObject);    
+    }
 
     public float shieldLevel {
         get {
@@ -110,6 +122,21 @@ public class Hero : MonoBehaviour {
                     // tell main.S to restart the game after a dleay
                 Main.S.DelayedRestart(gameRestartDelay);
             }
+        }
+    }
+
+    Weapon GetEmptyWeaponSlot() {
+        for (int i =0; i<weapons.Length; i++) {
+            if ( weapons[i].type == WeaponType.none) {
+                return (weapons[i]);
+            }
+        }
+        return (null);
+    }    
+
+    void ClearWeapons ()    {
+        foreach (Weapon w in weapons) {
+            w.SetType(WeaponType.none);
         }
     }
 } // first curly
