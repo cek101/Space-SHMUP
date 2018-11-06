@@ -12,12 +12,38 @@ public class Main : MonoBehaviour {
     public float                enemySpawnPerSecond = 0.5f; // # enemies/second
     public float                enemyDefaultPadding = 1.5f; // padding for position
     public WeaponDefinition[]   weaponDefinitions;
+    public GameObject           prefabPowerUp;
 
+    public WeaponType[] powerUpFrequency = new WeaponType[] {
+        WeaponType.blaster,
+        WeaponType.blaster,
+        WeaponType.spread,
+        WeaponType.shield }; // is this weaponType.shi?
 
     private BoundsCheck bndCheck;
 
-	// Use this for initialization
-	void Awake () {
+    public void ShipDestroyed( Enemy e) { 
+        // potentially generate a PowerUp
+        if (Random.value <= e.powerUpDropChance) {
+            // choose which PowerUp to pick
+            // pick one from the possibilities in powerUpFrequency
+            int ndx = Random.Range(0, powerUpFrequency.Length);
+            WeaponType puType = powerUpFrequency[ndx];
+
+            // spawn a powerUp
+            GameObject go = Instantiate( prefabPowerUp ) as GameObject;
+            PowerUp pu = go.GetComponent<PowerUp>();
+            // set it to the proper WeaponType
+            pu.SetType(puType);
+
+            // set it to the position of the destroyed ship
+            pu.transform.position = e.transform.position;
+        }
+
+    }
+
+    // Use this for initialization
+    void Awake () {
         S = this;
         // set bndCheckto reference the BoundsCheck component on this GameObject
         bndCheck = GetComponent<BoundsCheck>();

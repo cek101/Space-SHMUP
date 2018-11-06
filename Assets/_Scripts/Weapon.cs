@@ -63,7 +63,7 @@ public class Weapon: MonoBehaviour      {
 
         // dynamically create an anchor for all Projectiles
         if (PROJECTILE_ANCHOR == null)      {
-            GameObject go = new GameObject("_ProjectileAnochor");
+            GameObject go = new GameObject("_ProjectileAnchor");
             PROJECTILE_ANCHOR = go.transform;
         }
         // find the fireDelegate of the root GameObject

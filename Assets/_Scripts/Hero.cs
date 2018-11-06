@@ -27,9 +27,13 @@ public class Hero : MonoBehaviour {
     // create a WeaponFirDelegate field named fireDelegate
     public WeaponFireDelegate       fireDelegate;
 
-    void Awake() {
+    void Start() {
         if (S == null) {
             S = this; //set the singleton
+                      // fireDelegate += TempFire;
+                      // reset the weapons to start _Hero with 1 blaster
+            ClearWeapons();
+            weapons[0].SetType(WeaponType.blaster);
         }
         else {
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S!");
@@ -103,9 +107,17 @@ public class Hero : MonoBehaviour {
     public void AbsorbPowerUp( GameObject go) {
         PowerUp pu = go.GetComponent<PowerUp>();
         switch (pu.type) {
-
-            // leave this switch block empty for now
-
+            case WeaponType.shield: shieldLevel++;
+                break;
+            default: if (pu.type == weapons[0].type) { // if it is the same type
+                    Weapon w = GetEmptyWeaponSlot();
+                    if (w != null) {
+                    }
+                } else { // if this is a different weapon
+                    ClearWeapons();
+                    weapons[0].SetType(pu.type);
+                }
+                break;
         }
         pu.AbsorbedBy(this.gameObject);    
     }
